@@ -1,0 +1,82 @@
+body {
+  background-color: blanchedalmond;
+  margin: 2% 2% 2%;
+}
+
+h1 {
+  font-size: 4vw;
+  font-family: "Noto Sans", sans-serif;
+}
+
+h2 {
+  font-size: 3vw;
+  font-family: "Noto Sans", sans-serif;
+}
+
+h3 {
+  font-size: 2vw;
+  font-family: "Noto Sans", sans-serif;
+}
+
+p,
+ul,
+li {
+  font-size: 1.5vw;
+  font-family: "Noto Sans", sans-serif;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+th,
+td {
+  font-size: 1.5vw;
+  padding: 5px;
+  font-family: "Noto Sans", sans-serif;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.container {
+  margin: 6%;
+}
+
+.exp {
+  color: grey;
+}
+
+#vis-1 {
+  width: 100%;
+  height: 100;
+}
+
+#vis-2 {
+  visibility: visble;
+}
+
+svg {
+  display: block;
+  margin: auto;
+  background-color: rgb(254, 252, 252);
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  margin: 3px;
+  border-radius: 6px;
+  width: 130px;
+}
+
+.buttonactive {
+  margin: 3px;
+  border-radius: 6px;
+  width: 130px;
+  font-weight: 800;
+  border: 4px solid black;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+  <link>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>Visualizaciones</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+
+  <body>
+    <div class="container">
+        <div class="subcontainer" id="vis-1">
+            <h2>Premier League Teams</h2>
+            <p class="exp">El siguiente gráfico tiene como objetivo mostrar la diferencia entre los goles esperados y los goles que se convirtieron para los 20 equipos que conforman la Premier League. Los puntos grises representan lo que se esperaba que ese equipo convierta (o reciba), y los puntos de color muestra los goles que realmente convirtió (o le convirtieron). El color de los puntos representa la diferencia entre lo que se esperaba y lo que realmente ocurrió (verde intenso para equipos que tuvieron un rendimiento muy por sobre el esperado, y rojo intenso para lo contrario, con toda la gama de tonos entre medio). Se puede cambiar el tipo de información con los botones en la parte superior, y se pueden ocultar los puntos de cualquiera de los dos tipos presionando en la leyenda ubicada en la parte superior.</p>
+            <br>
+            <div class="center">
+              <button class="buttonactive" id="difference">Goal Difference</button>
+              <button class="button" id="scored">Goals Scored</button>
+              <button class="button" id="conceded">Goals Conceded</button>
+            </div>
+        </div>
+        <br>
+        <div class="subcontainer" id="vis-2">
+          <h2>Matches</h2>
+          <p class="exp">La siguiente vista muestra los partidos del equipo seleccionado. Se muestra el resultado del partido con la expectativa de gol entre paréntesis justo abajo. Los colores en los números tienen el mismo significado que en el gráfico anterior.</p>
+          <br>
+          <div class="center">
+            <button class="buttonactive" id="all">All</button>
+            <button class="button" id="wins">Wins</button>
+            <button class="button" id="draws">Draws</button>
+            <button class="button" id="losses">Losses</button>
+          </div>
+        </div>
+    </div>
+    <script src="vis1.js" charset='utf-8'></script>
+    <script src="vis2.js" charset='utf-8'></script>
+  </body>
+</html>

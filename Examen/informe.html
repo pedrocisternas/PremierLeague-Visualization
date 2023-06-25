@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<link>
+<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+<title>Informe</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Informe Examen:</h1>
+        <!-- Relación entre Goles Esperados y Goles en Premier League 2018/19 -->
+        <p>IIC2026 - Visualización de Información</p>
+        <p><b>Creador visualizaciones:</b> Pedro Cisternas</p>
+        <p>Noviembre 2022</p>
+        <p><b>Fuente datos utilizados:</b><a href="https://footystats.org/download-stats-csv#whats_included">
+                FootyStats</a></p>
+        <div id="caracterizacion">
+            <h2>Caracterización del dominio</h2>
+            <h3>Naturaleza datos</h3>
+            <p>Para este examen, se realizaron visualizaciones con datos pertenecientes a la Premier League temporada 2018/19, para las cuales se usaron dos datasets, ambos extraídos de <a href="https://footystats.org/download-stats-csv#whats_included">
+                FootyStats</a>: </p>
+            <ul>
+                <li>england-premier-league-teams-2018-to-2019-stats.csv</li>
+                <li>england-premier-league-matches-2018-to-2019-stats.csv</li>
+            </ul>
+            <p>Estos datasets fueron procesados y filtrados en el archivo preprocesamiento.ipynb, de modo de hacerlos más livianos. Como se podrá ver en las visualizaciones, el primer dataset contiene información correspondiente a los 20 equipos que compitieron esa temporada en Premier League, incluyendo nombre del equipo, cantidad de puntos, goles marcados, recibidos, goles esperados a favor y en contra, entre otros. Por otro lado, el segundo dataset contiene información correspondiente a cada partido de la temporada, incluyendo los dos equipos que se enfrentaron, el resultado del marcador, los goles esperados, entre otros datos. Dentro de la información que se utilizó para confeccionar las visualizaciones hay en su mayoría conceptos básicos como goles marcados, recibidos, y diferencia de gol, que cualquier persona ajena al deporte podría entender, sin embargo, también se ocupó información un poco más técnica y compleja de entender, por lo que resulta muy importante definir ciertos conceptos antes de seguir con este informe:</p>
+            <ul>
+                <li><b>Goles esperados (expected goals, xG):</b> Una métrica que le asigna un valor entre 0 y 1 a cada disparo o intento de disparo, el cual representa la probabilidad de que esa aproximación termine en gol. Por ejemplo, un remate (disparo) desde el área chica, sin defensa ni arqueros de por medio tiene un valor muy cercano a 1, y en el caso contrario, un remate desde mitad de cancha tendría un valor cercano a 0. Si se suman todas las probabilidades de goles esperados a lo largo de un partido, se obtiene un valor que representa la cantidad esperada de goles de un equipo. Esta métrica puede ser utilizada para predecir los goles marcados o recibidos por un equipo a lo largo de un partido o campeonato.</li>
+                <br>
+                <li><b>Goles marcados (o recibidos):</b> Son simplemente los goles que un equipo marca (o recibe) a lo largo de un partido o campeonato.</li>
+                <br>
+                <li><b>Diferencia entre goles esperados y goles marcados:</b> Es una resta entre el valor de goles marcados y goles marcados esperados. Obtener un número positivo en aquella resta significa que el equipo obtuvo un rendimiento mejor que el que se esperaba (overperform en inglés). Esto se puede deber a factores como delanteros muy precisos, un mal arquero rival, suerte, entre otros. Por el contrario, un número negativo en la resta significa que el equipo no pudo concretar la cantidad de goles que se esperaba que marque (underperform en inglés), debido a los mismos factores recién mencionados.</li>
+                <br>
+                <li><b>Diferencia entre goles esperados y goles recibidos:</b> Es una resta entre el valor de goles recibidos y goles recibidos esperados. Obtener un número positivo en aquella resta significa que el equipo recibió más goles de lo que se esperaba, o sea, tuvieron un arquero que jugó mal, se enfrentaron a delanteros muy precisos, mala suerte entre otros. El caso contrario significaría justamente lo opuesto.</li>
+            </ul>
+            <p>En los últimos años se ha masificado el uso de estos conceptos, ya que permiten medir y cuantificar el rendimiento de los equipos (tanto ofensivo como defensivo) con una métrica distinta a los goles que realmente se marcaron. Estos conceptos se usan también para medir el desempeño de jugadores (ver que tan efectivos son frente al arco rival, por ejemplo), sin embargo, para este trabajo sólo se usaron valores de goles esperados a nivel equipo.</p>
+            <h3>Usuario objetivo y tipo de uso de la herramienta</h3>
+            <p>El usuario objetivo de este trabajo es cualquier persona que trabaje o sea fanática del fútbol, que quiera obtener información de como se relacionan los goles esperados con los goles, y como la relación entre estos puede definir el resultado de partidos, y por ende, campeonatos.</p>
+            <p>La herramienta busca permitirle al usuario entender como se relacionaron los goles esperados (a favor, en contra, y diferencia) con los goles que realmente se marcaron para cada equipo de la liga. Pretende ser una herramienta interactiva, que le permita cambiar el tipo de información desplegada y filtrar dependiendo de lo que quiere ver en pantalla. Además, le otorga la posibilidad de seleccionar un equipo específico, para ver qué pasó en cada partido de la temporada de ese equipo, para así ver en qué partidos el equipo marcó más o menos de lo que se esperaba, al igual que con los goles recibidos.</p>
+            <p>Ya sabiendo lo que se busca mediante esta herramienta, resulta conveniente describir un poco cómo debiera leerse la información desplegada, y que significa (de manera que cualquier persona sin conocimientos de fútbol la pueda entender). En la primera vista, se muestra una tabla donde cada fila representa a un equipo, donde los equipos están ordenados de acuerdo a la posición que obtuvo en el campeonato que se está analizando (Premier League 2018/19 en este caso). En la fila de cada equipo se ecnuentran dos puntos: uno gris, que representa los goles esperados (marcados, recibidos o su diferencia dependiendo del botón seleccionado), y uno de color, que representa la cantidad de goles (marcados, recibidos o su diferencia dependiendo del botón seleccionado). El botón de color puede tener desde un color rojo intenso, hasta un color verde intenso (pasando por el blanco en forma de gradiente), que representa la diferencia entre los goles esperado y los goles reales. Por ejemplo, si tenemos seleccionado el botón de goles marcados, un equipo que tenga menos goles marcados que esperados, va a tener el círculo de goles marcados pintado de color rojo, debido a que su rendimiento fue menor al esperado. Por el contrario, si cambiando el botón a goles recibidos ese mismo equipo tiene menos goles recibidos que goles esperados, el círculo sería pintado de color verde (debido a que le marcaron menos goles de lo que se esperaba, lo cual es visto como bueno).</p>
+            <p>Con eso en mente, el usuario puede explorar, descubrir e identificar información mediante el uso de su mouse, los botones, y eliminando los puntos grises o de color (presionando la leyenda en la parte superior). Además, si selecciona un equipo en la tabla podrá ver la información de todos los partidos que jugó aquel partido en la temporada, donde los resultados actuales están representado por números grandes de color (siguiendo la misma lógica recíen mencionada), y los goles esperados está representados por números grises entre paréntesis.</p>
+            <h2>Abstracción de datos y tareas</h2>
+            <h3>Abstracción de Tareas</h3>
+            <ul>
+                <li><b>Primera Tarea:</b> Descubrir correlación entre goles marcados (o recibidos o diferencia) y posición en la liga</li>
+                <p>De esta forma, el usuario podrá ver la importancia que tiene marcar o recibir goles para definir la posición en la liga. Por ejemplo el usuario podría llegar a la conclusión que los goles marcados tienen una gran correlación con la posición de la liga en la parte baja de la tabla.</p>
+                <li><b>Segunda Tarea:</b> Explorar para encontrar equipos que han tenido un rendimiento menor o mayor al esperado</li>
+                <p>El usuario será capaz de encontrar equipos que han tenido un rendimiento distinto al esperado (mayor o menor), cuantificar esa diferencia, y ver como se compara con las diferencias de rendimiento con los otros equipos.</p>
+                <li><b>Tercera Tarea:</b> Identificar partidos donde un equipo en particular tuvo un rendimiento muy distinto al esperado</li>
+                <p>El usuario podrá identificar rápidamente en qué partidos el equipo seleccionado tuvo un rendimiento menor o mayor al esperado (tanto defensiva como ofensivamente), y ver cuál fue el resultado de ese partido (para ver si esa bajo o alto rendimiento afectó en el resultado).</p>
+            </ul>
+            <h3>Abstracción de Datos</h3>
+            <p><b>Tipos de datasets: </b>Cómo ya se mencionó, se utilizaron dos datasets, los cuales ambos son de tipo tabular.</p>
+            <p><b>Tipos singulares de datos: </b>Tenemos datos del tipo ítem, los cuales son equipos (cada fila del dataset de equipos), y partidos (cada fila del dataset de equipos). Los datos de tipo atributo serán especificados en la siguiente tabla:</p>
+            <table>
+                <tr>
+                    <th>Dataset</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Uso</th>
+                    <th>Abstracción</th>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>common_name</td>
+                    <td>Nombre con el que se conoce al equipo</td>
+                    <td>Para identificar al ítem y mostrar el nombre de cada equipo en la tabla</td>
+                    <td>Categórico, llave</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>points_per_game</td>
+                    <td>Puntos obtenidos por partido en la temporada</td>
+                    <td>Para calcular los puntos totales y mostrarlos como apoyo en tabla de posiciones</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>league_position</td>
+                    <td>Posición en la liga</td>
+                    <td>Para ordenar equipo en tabla</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>goals_scored</td>
+                    <td>Goles marcados en la temporada</td>
+                    <td>Para calcular la ubicación de cada punto de goles marcados en la visualización</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>goals_conceded</td>
+                    <td>Goles recibidos en la temporada</td>
+                    <td>Para calcular la ubicación de cada punto de goles recibidos en la visualización</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>goal_difference</td>
+                    <td>Diferencia de goles en la temporada</td>
+                    <td>Para calcular la ubicación de cada punto de diferencia de goles en la visualización</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>xg_for_avg_overall</td>
+                    <td>Goles esperados a favor por partido en la temporada</td>
+                    <td>Para calcular la ubicación de cada punto de goles esperados a favor en la visualización</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>xg_against_avg_overall</td>
+                    <td>Goles esperados en contra por partido en la temporada</td>
+                    <td>Para calcular la ubicación de cada punto de goles esperados en contra en la visualización</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Partidos</td>
+                    <td>home_team_name</td>
+                    <td>Nombre equipo local</td>
+                    <td>Para mostrar solo los partidos del equipo seleccionado por el usuario</td>
+                    <td>Categórico, valor</td>
+                </tr>
+                <tr>
+                    <td>Partidos</td>
+                    <td>away_team_name</td>
+                    <td>Nombre equipo visita</td>
+                    <td>Para mostrar solo los partidos del equipo seleccionado por el usuario</td>
+                    <td>Categórico, valor</td>
+                </tr>
+                <tr>
+                    <td>Partidos</td>
+                    <td>home_team_initial</td>
+                    <td>Iniciales equipo local</td>
+                    <td>Mostrar iniciales para que usuario identifique el equipo</td>
+                    <td>Categórico, valor</td>
+                </tr>
+                <tr>
+                    <td>Partidos</td>
+                    <td>away_team_initial</td>
+                    <td>Inicialea equipo visita</td>
+                    <td>Mostrar iniciales para que usuario identifique el equipo</td>
+                    <td>Categórico, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>home_team_goal_count</td>
+                    <td>Goles marcados por equipo local</td>
+                    <td>Mostrar los goles que se marcaron</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>away_team_goal_count</td>
+                    <td>Goles marcados por equipo visita</td>
+                    <td>Mostrar los goles que se marcaron</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>team_a_xg</td>
+                    <td>Goles esperados marcados por equipo local</td>
+                    <td>Mostrar los goles que se esperaban</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+                <tr>
+                    <td>Equipos</td>
+                    <td>team_b_xg</td>
+                    <td>Goles esperados marcados por equipo visita</td>
+                    <td>Mostrar los goles que se esperaban</td>
+                    <td>Ordenado, cuantitativo, secuencial, valor</td>
+                </tr>
+            </table>
+            <h2>Codificación visual y de interacción</h2>
+            <p>Para lograr las tareas mencionadas en el apartado anterior, se tomaron las siguientes decisiones de diseño, y se utilizaron las siguientes marcas, canales, idioms visuales y de interacción:</p>
+            <h3>Decisiones de diseño</h3>
+            <ul>
+                <li><b>Partición en dos vistas:</b></li>
+                <p>Para permitirle al usuario ahondar en la información mostrada en la tabla de posiciones con goles y goles esperados, se
+                provee una vista que muestra todos los partidos de la temporada de un equipo seleccionado por el usuario, de modo de
+                poder mostrar cómo fue el rendimiento del equipo en cada uno de los partidos. Esto se hizo de modo de cumplir la Tercera Tarea.</p>
+            </ul>
+            <h3>Idioms visuales</h3>
+            <ul>
+                <li><b>Gráfico de puntos con equipos ordenados por posiciones:</b></li>
+                <p>Permite al usuario tener una clara idea de cómo se relacionan todos los datos mostrados en (goles esperados y goles,
+                tanto a favor como en contra), con la posición en la cual terminó un equipo. Es decir, para poder cumplir de buena
+                manera la Primera Tarea.</p>
+                <li><b>Grilla con los partidos donde cierto equipo jugó:</b></li>
+                <p>Permite al usuario identificar los partidos donde el equipo seleccionado tuvo un mayor o menor rendimiento al esperado, y por tanto cumplir con la Tercera Tarea.</p>
+            </ul>
+            <h3>Idioms interactivos</h3>
+            <ul>
+                <li><b>Navegación por los puntos:</b></li>
+                <p>Ayuda al usuario a comparar rápidamente la diferencia entre los goles esperados (punto gris) y los goles (punto de color) al agrandar y resaltar el contorno de los puntos asociados a un mismo equipo. Esto para llevar a cabo la Segunda Tarea.</p>
+                <li><b>Selección de equipo:</b></li>
+                <p>Permite al usuario escoger un equipo para poder ver información acerca de los partidos donde jugó aquel equipo. Ayuda a cumplir la Tercera Tarea.</p>
+                <li><b>Filtros para esconder puntos de goles o goles esperados:</b></li>
+                <p>Se logra apretando la leyenda con puntos de arriba. Permite al usuario filtrar la información que quiere ver para descubrir de manera más rápida la correlación entre los goles (o goles esperados) con la posición en la tabla de los equipos. Esto aporta con el cumplimiento de la Primera Tarea.</p>
+                <li><b>Filtros para mostrar sólo victorias, empates o derrotas en segunda vista:</b></li>
+                <p>Colabora con el usuario ya que le permite identificar de manera más rápida la información de rendimientos por partido, o sea, a cumplir con la Tercera Tarea. Además, le permite ver si esa diferencia que se muestra entre el rendimiento esperado y real por partido se tradujo en resultados positivos o negativos, lo que podría ser agregado como una tarea adicional.</p>
+            </ul>
+            <h3>Marcas</h3>
+            <li><b>Puntos representando goles y goles esperados:</b></li>
+            <p>Se utilizan con el fin de representar de manera clara los goles y goles esperados de cada equipo. Los canales permiten transmitir esta información de manera efectiva. Esto es obviamente clave en el cumplimiento de la Primera y Segunda Tarea.</p>
+            <li><b>Números para mostrar cantidad de goles y goles esperados por partido:</b></li>
+            <p>Forma clara y fácil de entender para mostrar los goles y goles esperados (dentro de paréntesis). Se usan para cumplir con la Tercera Tarea.</p>
+            <h3>Canales</h3>
+            <li><b>Color de puntos (primera vista) y números (segunda vista):</b></li>
+            <p>Le ayuda al usuario a dimensionar la diferencia de rendimiento de un equipo a lo largo de la temporada (primera vista) o de un equipo durante un partido (segunda vista). Se usa la misma escala de colores para no desorientar al usuario, ya que trasmiten lo mismo (bajo rendimiento color rojo, y alto color verde). Cumple con la Segunda y Tercera Tarea.</p>
+            <li><b>Posición de puntos en eje x:</b></li>
+            <p>Permite al usuario cuantificar la diferencia entre goles y goles esperados por equipo, y a ver las relaciones entre goles y posición en tabla. Ayuda a cumplir con la Primera y Segunda Tarea.</p>
+        </div>
+    </div>
+</body>
+
+</html>
